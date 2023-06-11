@@ -10,9 +10,6 @@
 """Invenio standard theme."""
 
 from flask import Blueprint
-from flask_breadcrumbs import Breadcrumbs
-from flask_menu import Menu
-from invenio_i18n import lazy_gettext as _
 
 from . import config
 from .views import (
@@ -34,10 +31,6 @@ class InvenioTheme(object):
         :param app: An instance of :class:`~flask.Flask`.
         :param \**kwargs: Keyword arguments are passed to ``init_app`` method.
         """
-        self.menu_ext = Menu()
-        self.menu = None
-        self.breadcrumbs = Breadcrumbs()
-
         if app:
             self.init_app(app, **kwargs)
 
@@ -47,11 +40,6 @@ class InvenioTheme(object):
         :param app: An instance of :class:`~flask.Flask`.
         """
         self.init_config(app)
-
-        # Initialize extensions
-        self.menu_ext.init_app(app)
-        self.menu = app.extensions["menu"]
-        self.breadcrumbs.init_app(app)
 
         # Register blueprint in order to register template and static folder.
         app.register_blueprint(
@@ -66,10 +54,6 @@ class InvenioTheme(object):
         # Register frontpage blueprint if enabled.
         if app.config["THEME_FRONTPAGE"]:
             app.register_blueprint(blueprint)
-
-        # Initialize breadcrumbs.
-        item = self.menu.submenu("breadcrumbs")
-        item.register(app.config["THEME_BREADCRUMB_ROOT_ENDPOINT"], _("Home"))
 
         # Register errors handlers.
         app.register_error_handler(401, unauthorized)
